@@ -63,8 +63,9 @@ class CollageExporter(private val context: Context) {
             val clip = clips[box]
             val keepAudio = sound.keeps(box) && !clip.isImage
             val mediaItem = if (clip.isImage)
-                MediaItem.Builder().setUri(clip.uri).setImageDurationMs(PHOTO_DURATION_US / 1000).build()
-            else MediaItem.fromUri(clip.uri)
+                MediaItem.Builder().setUri(clip.uri).setMimeType(clip.mimeType ?: MimeTypes.IMAGE_JPEG)
+                    .setImageDurationMs(PHOTO_DURATION_US / 1000).build()
+            else MediaItem.Builder().setUri(clip.uri).setMimeType(clip.mimeType).build()
             val item = EditedMediaItem.Builder(mediaItem)
                 .apply { if (clip.isImage) setFrameRate(30) }
                 .setRemoveAudio(!keepAudio)
@@ -129,7 +130,8 @@ class CollageExporter(private val context: Context) {
                 ) {
                     transformer = null
                     tmp.delete()
-                    cb.onError(exportException.message ?: exportException.errorCodeName)
+                    val why = exportException.cause?.message ?: exportException.message
+                    cb.onError("${exportException.errorCodeName}${if (why != null) " ($why)" else ""}")
                 }
             })
             .build()

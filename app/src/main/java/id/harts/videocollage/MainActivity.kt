@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
             cell.addView(icon)
             cell.addView(TextView(this).apply {
                 text = l.label; textSize = 10f; setTextColor(Color.parseColor("#AAAAAA"))
-                gravity = Gravity.CENTER; width = 64.dp
+                gravity = Gravity.CENTER; width = 64.dp; setLines(2)
             })
             iconRow.addView(cell)
         }
@@ -202,7 +202,8 @@ class MainActivity : ComponentActivity() {
 
     private fun loadClip(cell: Int, uri: Uri) {
         io.execute {
-            val isImage = contentResolver.getType(uri)?.startsWith("image/") == true
+            val mime = contentResolver.getType(uri)
+            val isImage = mime?.startsWith("image/") == true
             val r = MediaMetadataRetriever()
             val clip = if (isImage) try {
                 val src = ImageDecoder.createSource(contentResolver, uri)
@@ -210,13 +211,13 @@ class MainActivity : ComponentActivity() {
                     val s = maxOf(1, maxOf(info.size.width, info.size.height) / 720)
                     dec.setTargetSize(info.size.width / s, info.size.height / s)
                 }
-                Clip(uri, PHOTO_DURATION_US, bmp, isImage = true)
+                Clip(uri, PHOTO_DURATION_US, bmp, isImage = true, mimeType = mime)
             } catch (e: Exception) { null } finally { r.release() } else try {
                 r.setDataSource(this, uri)
                 val durMs = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
                 val at = min(1_000_000L, durMs * 500L) // 1s in, or halfway for very short clips
                 val thumb = r.getScaledFrameAtTime(at, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 540, 540)
-                Clip(uri, durMs * 1000L, thumb)
+                Clip(uri, durMs * 1000L, thumb, mimeType = mime)
             } catch (e: Exception) {
                 null
             } finally {
