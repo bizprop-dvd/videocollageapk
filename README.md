@@ -24,3 +24,6 @@ then all boxes are composited with the phone's hardware encoder. Layout definiti
 `Model.kt` (boxes as fractions of the canvas) — add a new layout by adding one enum entry.
 
 The debug APK is fine for personal/team use. For Play Store you'd add a release signing key.
+
+**Direct download (after each successful build):**
+https://github.com/bizprop-dvd/videocollageapk/releases/latest/download/VideoCollage.apk

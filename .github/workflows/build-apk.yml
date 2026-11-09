@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
 
@@ -26,3 +28,12 @@ jobs:
         with:
           name: VideoCollage-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish APK as a direct download
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk VideoCollage.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest VideoCollage.apk --title "Video Collage (latest build)" --notes "Built from commit ${GITHUB_SHA::7}. Download VideoCollage.apk below and open it on your phone."
