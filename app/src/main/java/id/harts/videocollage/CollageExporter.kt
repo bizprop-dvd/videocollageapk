@@ -79,9 +79,9 @@ class CollageExporter(private val context: Context) {
                     )
                 )
                 .build()
-            val seq = if (keepAudio) EditedMediaItemSequence.withAudioAndVideoFrom(listOf(item))
-                      else EditedMediaItemSequence.withVideoFrom(listOf(item))
-            if (seqIndex == 0) seq else seq.buildUpon().setIsLooping(true).build()
+            EditedMediaItemSequence.Builder(listOf(item))
+                .setIsLooping(seqIndex != 0)
+                .build()
         }
 
         val compositor = object : VideoCompositorSettings {
