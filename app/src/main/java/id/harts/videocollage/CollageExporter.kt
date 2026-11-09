@@ -61,7 +61,7 @@ class CollageExporter(private val context: Context) {
         val sequences = order.mapIndexed { seqIndex, box ->
             val r = boxes[box]
             val clip = clips[box]
-            val keepAudio = sound.keeps(box) && !clip.isImage
+            val keepAudio = sound.keeps(box) && clip.hasAudio
             val mediaItem = if (clip.isImage)
                 MediaItem.Builder().setUri(clip.uri).setMimeType(clip.mimeType ?: MimeTypes.IMAGE_JPEG)
                     .setImageDurationMs(PHOTO_DURATION_US / 1000).build()
@@ -102,7 +102,7 @@ class CollageExporter(private val context: Context) {
 
         val composition = Composition.Builder(sequences)
             .setVideoCompositorSettings(compositor)
-            .experimentalSetForceAudioTrack(sound !is Sound.Mute && clips.any { !it.isImage })
+            .experimentalSetForceAudioTrack(clips.indices.any { sound.keeps(it) && clips[it].hasAudio })
             .build()
 
         val tmp = File(context.cacheDir, "collage_${System.currentTimeMillis()}.mp4")

@@ -59,6 +59,7 @@ sealed class Sound {
 
 /** A video, or a photo shown as a still for [PHOTO_DURATION_US]. */
 /** [mimeType] matters: picker URIs have no file extension, so export needs it to know photo vs video. */
-data class Clip(val uri: Uri, val durationUs: Long, val thumb: Bitmap?, val isImage: Boolean = false, val mimeType: String? = null)
+data class Clip(val uri: Uri, val durationUs: Long, val thumb: Bitmap?, val isImage: Boolean = false, val mimeType: String? = null,
+                val hasAudio: Boolean = false)
 
 const val PHOTO_DURATION_US = 5_000_000L

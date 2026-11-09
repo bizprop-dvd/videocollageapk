@@ -217,7 +217,8 @@ class MainActivity : ComponentActivity() {
                 val durMs = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
                 val at = min(1_000_000L, durMs * 500L) // 1s in, or halfway for very short clips
                 val thumb = r.getScaledFrameAtTime(at, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 540, 540)
-                Clip(uri, durMs * 1000L, thumb, mimeType = mime)
+                val hasAudio = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) == "yes"
+                Clip(uri, durMs * 1000L, thumb, mimeType = mime, hasAudio = hasAudio)
             } catch (e: Exception) {
                 null
             } finally {
